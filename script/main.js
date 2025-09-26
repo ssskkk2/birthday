@@ -109,7 +109,7 @@ function showMusicButton() {
     
     // Create button
     const button = document.createElement('button');
-    button.innerHTML = '🎵 Start My Birthday Surprise! 🎂';
+    button.innerHTML = 'Press here for your surprise';
     button.style.cssText = `
         background: linear-gradient(45deg, #ff6b9d, #ff8e53);
         color: white;
