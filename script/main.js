@@ -45,7 +45,7 @@ function startBirthdayExperience() {
                 audioElement.pause();
                 audioElement.currentTime = 0; // Reset to beginning
                 console.log('Music stopped after 1min 15sec');
-            }, 180000); // 75 seconds = 1 minute 15 seconds
+            }, 240000); // 75 seconds = 1 minute 15 seconds
         }).catch(error => {
             console.log('Autoplay prevented:', error);
             showMusicButton();
