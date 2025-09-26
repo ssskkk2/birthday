@@ -1,21 +1,15 @@
-// trigger to play music in the background with sweetalert
+// automatically start music and animation when page loads
 window.addEventListener('load', () => {
-    Swal.fire({
-        title: 'Do you want to play music in the background?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.querySelector('.song').play();
-            animationTimeline();
-        } else {
-            animationTimeline();
-        }
-    });
+    const audio = document.querySelector('.song');
+    audio.play();
+    
+    // Stop audio after 1 minute and 15 seconds (75 seconds)
+    setTimeout(() => {
+        audio.pause();
+        audio.currentTime = 0; // Reset to beginning
+    }, 75000); // 75 seconds = 1 minute 15 seconds
+    
+    animationTimeline();
 });
 
 
