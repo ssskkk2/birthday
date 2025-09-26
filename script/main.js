@@ -1,22 +1,56 @@
 // start music and animation when user interacts with the page
 let musicStarted = false;
+let audioElement = null;
+
+function initializeAudio() {
+    audioElement = document.querySelector('.song');
+    if (!audioElement) {
+        console.error('Audio element not found!');
+        return false;
+    }
+    
+    // Set audio properties
+    audioElement.loop = true;
+    audioElement.volume = 0.7; // Set volume to 70%
+    
+    // Check if audio file exists
+    audioElement.addEventListener('error', (e) => {
+        console.error('Audio file error:', e);
+        showError('Audio file not found. Please check if hbd.mp3 exists in the music folder.');
+    });
+    
+    return true;
+}
 
 function startBirthdayExperience() {
     if (musicStarted) return;
     musicStarted = true;
     
-    const audio = document.querySelector('.song');
-    audio.play().catch(error => {
-        console.log('Autoplay prevented:', error);
-        // If autoplay fails, show a button to start music
-        showMusicButton();
-    });
+    if (!audioElement) {
+        if (!initializeAudio()) {
+            showError('Audio system not available');
+            animationTimeline();
+            return;
+        }
+    }
     
-    // Stop audio after 1 minute and 15 seconds (75 seconds)
-    setTimeout(() => {
-        audio.pause();
-        audio.currentTime = 0; // Reset to beginning
-    }, 75000); // 75 seconds = 1 minute 15 seconds
+    // Try to play audio
+    const playPromise = audioElement.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            console.log('Music started successfully!');
+            // Stop audio after 1 minute and 15 seconds (75 seconds)
+            setTimeout(() => {
+                audioElement.pause();
+                audioElement.currentTime = 0; // Reset to beginning
+                console.log('Music stopped after 1min 15sec');
+            }, 75000); // 75 seconds = 1 minute 15 seconds
+        }).catch(error => {
+            console.log('Autoplay prevented:', error);
+            showMusicButton();
+        });
+    }
     
     animationTimeline();
 }
@@ -38,19 +72,61 @@ function showMusicButton() {
         cursor: pointer;
         z-index: 1000;
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        font-family: 'Poppins', sans-serif;
     `;
     
     button.addEventListener('click', () => {
-        document.querySelector('.song').play();
+        if (audioElement) {
+            audioElement.play().then(() => {
+                console.log('Music started via button!');
+                // Stop audio after 1 minute and 15 seconds (75 seconds)
+                setTimeout(() => {
+                    audioElement.pause();
+                    audioElement.currentTime = 0;
+                }, 75000);
+            }).catch(error => {
+                console.error('Failed to play audio:', error);
+                showError('Could not play audio. Please check your browser settings.');
+            });
+        }
         button.remove();
-        animationTimeline();
+        if (!musicStarted) {
+            animationTimeline();
+        }
     });
     
     document.body.appendChild(button);
 }
 
-// Try to start on page load
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.innerHTML = `⚠️ ${message}`;
+    errorDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ff6b6b;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1001;
+        font-family: 'Poppins', sans-serif;
+    `;
+    document.body.appendChild(errorDiv);
+    
+    // Remove error after 5 seconds
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.parentNode.removeChild(errorDiv);
+        }
+    }, 5000);
+}
+
+// Initialize when page loads
 window.addEventListener('load', () => {
+    console.log('Page loaded, initializing birthday experience...');
+    initializeAudio();
     startBirthdayExperience();
 });
 
