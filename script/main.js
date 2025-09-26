@@ -1,7 +1,16 @@
-// automatically start music and animation when page loads
-window.addEventListener('load', () => {
+// start music and animation when user interacts with the page
+let musicStarted = false;
+
+function startBirthdayExperience() {
+    if (musicStarted) return;
+    musicStarted = true;
+    
     const audio = document.querySelector('.song');
-    audio.play();
+    audio.play().catch(error => {
+        console.log('Autoplay prevented:', error);
+        // If autoplay fails, show a button to start music
+        showMusicButton();
+    });
     
     // Stop audio after 1 minute and 15 seconds (75 seconds)
     setTimeout(() => {
@@ -10,7 +19,45 @@ window.addEventListener('load', () => {
     }, 75000); // 75 seconds = 1 minute 15 seconds
     
     animationTimeline();
+}
+
+function showMusicButton() {
+    const button = document.createElement('button');
+    button.innerHTML = '🎵 Start Birthday Music 🎵';
+    button.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #ff69b4;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18px;
+        border-radius: 25px;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    `;
+    
+    button.addEventListener('click', () => {
+        document.querySelector('.song').play();
+        button.remove();
+        animationTimeline();
+    });
+    
+    document.body.appendChild(button);
+}
+
+// Try to start on page load
+window.addEventListener('load', () => {
+    startBirthdayExperience();
 });
+
+// Also try to start on any user interaction
+document.addEventListener('click', startBirthdayExperience);
+document.addEventListener('keydown', startBirthdayExperience);
+document.addEventListener('touchstart', startBirthdayExperience);
 
 
 // animation timeline
