@@ -56,25 +56,88 @@ function startBirthdayExperience() {
 }
 
 function showMusicButton() {
-    const button = document.createElement('button');
-    button.innerHTML = '🎵 Start Birthday Music 🎵';
-    button.style.cssText = `
+    // Create overlay background
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
         position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: #ff69b4;
-        color: white;
-        border: none;
-        padding: 15px 30px;
-        font-size: 18px;
-        border-radius: 25px;
-        cursor: pointer;
-        z-index: 1000;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        font-family: 'Poppins', sans-serif;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.5s ease-in;
     `;
     
+    // Create main popup container
+    const popup = document.createElement('div');
+    popup.style.cssText = `
+        background: linear-gradient(135deg, #ff6b9d, #c44569, #f8b500);
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        animation: bounceIn 0.8s ease-out;
+        max-width: 400px;
+        margin: 20px;
+    `;
+    
+    // Create title
+    const title = document.createElement('h2');
+    title.innerHTML = '🎉 Happy Birthday Kashish! 🎉';
+    title.style.cssText = `
+        color: white;
+        margin: 0 0 20px 0;
+        font-size: 24px;
+        font-family: 'Poppins', sans-serif;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    `;
+    
+    // Create message
+    const message = document.createElement('p');
+    message.innerHTML = 'Click the button below to start your birthday music and animation! 🎵';
+    message.style.cssText = `
+        color: white;
+        margin: 0 0 30px 0;
+        font-size: 16px;
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.5;
+    `;
+    
+    // Create button
+    const button = document.createElement('button');
+    button.innerHTML = '🎵 Start My Birthday Surprise! 🎂';
+    button.style.cssText = `
+        background: linear-gradient(45deg, #ff6b9d, #ff8e53);
+        color: white;
+        border: none;
+        padding: 20px 40px;
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        animation: pulse 2s infinite;
+    `;
+    
+    // Add hover effects
+    button.addEventListener('mouseenter', () => {
+        button.style.transform = 'scale(1.05)';
+        button.style.boxShadow = '0 12px 25px rgba(0,0,0,0.4)';
+    });
+    
+    button.addEventListener('mouseleave', () => {
+        button.style.transform = 'scale(1)';
+        button.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+    });
+    
+    // Add click handler
     button.addEventListener('click', () => {
         if (audioElement) {
             audioElement.play().then(() => {
@@ -89,13 +152,52 @@ function showMusicButton() {
                 showError('Could not play audio. Please check your browser settings.');
             });
         }
-        button.remove();
+        
+        // Remove popup with animation
+        popup.style.animation = 'fadeOut 0.5s ease-in';
+        overlay.style.animation = 'fadeOut 0.5s ease-in';
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }, 500);
+        
         if (!musicStarted) {
             animationTimeline();
         }
     });
     
-    document.body.appendChild(button);
+    // Assemble popup
+    popup.appendChild(title);
+    popup.appendChild(message);
+    popup.appendChild(button);
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+    
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 function showError(message) {
@@ -127,7 +229,18 @@ function showError(message) {
 window.addEventListener('load', () => {
     console.log('Page loaded, initializing birthday experience...');
     initializeAudio();
-    startBirthdayExperience();
+    
+    // Try multiple autoplay strategies
+    setTimeout(() => {
+        startBirthdayExperience();
+    }, 100);
+    
+    // Try again after a short delay
+    setTimeout(() => {
+        if (!musicStarted) {
+            startBirthdayExperience();
+        }
+    }, 1000);
 });
 
 // Also try to start on any user interaction
