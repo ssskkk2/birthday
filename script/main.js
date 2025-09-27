@@ -40,12 +40,7 @@ function startBirthdayExperience() {
     if (playPromise !== undefined) {
         playPromise.then(() => {
             console.log('Music started successfully!');
-            // Stop audio after 1 minute and 15 seconds (75 seconds)
-            setTimeout(() => {
-                audioElement.pause();
-                audioElement.currentTime = 0; // Reset to beginning
-                console.log('Music stopped after 1min 15sec');
-            }, 300000); // 75 seconds = 1 minute 15 seconds
+            // Music will loop continuously as defined in HTML
         }).catch(error => {
             console.log('Autoplay prevented:', error);
             showMusicButton();
@@ -142,11 +137,7 @@ function showMusicButton() {
         if (audioElement) {
             audioElement.play().then(() => {
                 console.log('Music started via button!');
-                // Stop audio after 1 minute and 15 seconds (75 seconds)
-                setTimeout(() => {
-                    audioElement.pause();
-                    audioElement.currentTime = 0;
-                }, 75000);
+                // Music will loop continuously as defined in HTML
             }).catch(error => {
                 console.error('Failed to play audio:', error);
                 showError('Could not play audio. Please check your browser settings.');
